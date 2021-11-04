@@ -32,7 +32,11 @@ const HomePage = () => {
 
       <Row>
         <Col>
-          <Tareas tareasList={user.tareas} />
+          {user.tareas && user.tareas.length > 0 ? (
+            <Tareas tareasList={user.tareas} />
+          ) : (
+            <h3 className="text-center">No hay tareas</h3>
+          )}
         </Col>
       </Row>
       {/* FORM PARA AGREGAR UNA TAREA */}
