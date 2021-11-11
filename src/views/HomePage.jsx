@@ -24,7 +24,7 @@ const HomePage = () => {
         <h1 className="tareas-title">Tareas</h1>
         <button
           className="btn btn-light btn-add"
-          onClick={handleAddTask.bind(this, { sport: "soccerGames" })}
+          onClick={handleAddTask.bind(this, { estado: "Pendiente" })}
         >
           <FaPlus />
         </button>
