@@ -9,8 +9,7 @@ function AddForm(props) {
     const obj = {
       nombre: e.target.nombre.value,
       descripcion: e.target.descripcion.value,
-      estado: "Pendiente",
-      
+      estado: "pendiente",
     };
 
     await addTarea(obj)

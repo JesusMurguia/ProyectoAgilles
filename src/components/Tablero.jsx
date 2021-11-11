@@ -6,18 +6,19 @@ const Tablero = (props) => {
   const { updateTareas } = useAuth();
   const [tareasPendientes, setTareasPendientes] = useState([]);
   const [tareasProgreso, setTareasProgreso] = useState([]);
+  const [tareas, setTareas] = useState([]);
 
   const getTareas = useCallback(async () => {
     let tareasPendientes = [];
     let tareasProgreso = [];
-    props.tareasList.map((tarea, index) => {
+    const tareas = props.tareasList.map((tarea, index) => {
       tarea.index = index;
       tarea.estado === "progreso"
         ? tareasProgreso.push(tarea)
         : tareasPendientes.push(tarea);
       return tarea;
     });
-
+    setTareas(tareas);
     setTareasPendientes(tareasPendientes);
     setTareasProgreso(tareasProgreso);
   }, [props.tareasList]);
@@ -41,11 +42,23 @@ const Tablero = (props) => {
             setList={setTareasPendientes}
             group="shared-group-name"
             onEnd={async () => {
+              console.log("move to up or down pendientes");
+              console.log(tareasPendientes.concat(tareasProgreso));
               await updateTareas(tareasPendientes.concat(tareasProgreso));
             }}
             onAdd={async (evt) => {
-              tareasProgreso[evt.item.dataset.id].estado = "pendiente";
-              await updateTareas(tareasPendientes.concat(tareasProgreso));
+              console.log("move to pendiente");
+              console.log(tareasProgreso);
+              console.log(evt.item);
+              console.log(evt.oldIndex);
+              tareasProgreso[evt.oldIndex].estado = "pendiente";
+
+              //obtener el nombre de la tarea
+              //   console.log(evt.item.querySelector("h3").innerText);
+              //obtener la descripcion de la tarea
+              //  console.log(evt.item.querySelector("p").innerText);
+              //tareasProgreso[evt.item.dataset.id].estado = "pendiente";
+              // await updateTareas(tareasPendientes.concat(tareasProgreso));
             }}
           >
             {tareasPendientes.map((tarea) => (
@@ -69,11 +82,24 @@ const Tablero = (props) => {
             setList={setTareasProgreso}
             group="shared-group-name"
             onAdd={async (evt) => {
-              tareasPendientes[evt.item.dataset.id].estado = "progreso";
-              await updateTareas(tareasProgreso.concat(tareasPendientes));
+              console.log("move to progreso");
+              console.log(tareasPendientes);
+              console.log(evt.item);
+              console.log(evt.oldIndex);
+
+              tareasPendientes[evt.oldIndex].estado = "progreso";
+              //obtener el nombre de la tarea
+              //   console.log(evt.item.querySelector("h3").innerText);
+              //obtener la descripcion de la tarea
+              // console.log(evt.item.querySelector("p").innerText);
+              //tareasPendientes[evt.item.dataset.id].estado = "progreso";
+              //  await updateTareas(tareasProgreso.concat(tareasPendientes));
             }}
             onEnd={async () => {
-              await updateTareas(tareasProgreso.concat(tareasPendientes));
+              console.log("move to up or down progreso");
+              console.log(tareasPendientes.concat(tareasProgreso));
+
+              await updateTareas(tareasPendientes.concat(tareasProgreso));
             }}
           >
             {tareasProgreso.map((tarea) => (
