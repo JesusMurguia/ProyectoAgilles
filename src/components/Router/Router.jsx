@@ -5,6 +5,7 @@ import LoginForm from "../auth/LoginForm";
 import SignUpForm from "../auth/SignUpForm";
 import PrivateRoute from "./PrivateRoute";
 import PublicRoute from "./PublicRoute";
+
 import PageNotFound from "../../views/PageNotFound";
 function Router() {
   const loc = useLocation();

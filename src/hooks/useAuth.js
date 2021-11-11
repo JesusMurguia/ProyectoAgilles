@@ -143,6 +143,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const updateTareas = async (tareasList) => {
+  
     let tareas = tareasList.map((tarea) => {
       return {
         nombre: tarea.nombre.toString(),

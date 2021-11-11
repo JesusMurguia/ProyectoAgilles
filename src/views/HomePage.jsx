@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { Container, Row, Col } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 import { FaPlus } from "react-icons/fa";
 import AddForm from "../components/AddForm";
 import SuccessModal from "../components/SuccessModal";
 import { useAuth } from "../hooks/useAuth";
-import Tareas from "../components/Tareas";
+import Tablero from "../components/Tablero";
 
 const HomePage = () => {
   const { user } = useAuth();
@@ -30,15 +30,15 @@ const HomePage = () => {
         </button>
       </div>
 
-      <Row>
-        <Col>
-          {user.tareas && user.tareas.length > 0 ? (
-            <Tareas tareasList={user.tareas} />
-          ) : (
-            <h3 className="text-center">No hay tareas</h3>
-          )}
-        </Col>
-      </Row>
+      {/*
+TABLERO DONDE SE MUESTRA LAS TAREAS PENDIENTES Y TAREAS EN PROGRESO
+* */}
+      {user.tareas && user.tareas.length > 0 ? (
+        <Tablero tareasList={user.tareas} />
+      ) : (
+        <h3 className="text-center">No hay tareas</h3>
+      )}
+
       {/* FORM PARA AGREGAR UNA TAREA */}
       <AddForm
         game={showAddForm}

@@ -15,7 +15,11 @@ const NavBar = () => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="justify-content-end" style={{ width: "100%" }}>
-            {user && <Nav.Link onClick={logout}>Logout</Nav.Link>}
+            {user && (
+              <>
+                <Nav.Link onClick={logout}>Logout</Nav.Link>
+              </>
+            )}
             {!user && (
               <Nav.Link as={Link} to="/LogIn">
                 Log In

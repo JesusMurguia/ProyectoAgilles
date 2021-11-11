@@ -10,6 +10,7 @@ function AddForm(props) {
       nombre: e.target.nombre.value,
       descripcion: e.target.descripcion.value,
       estado: "Pendiente",
+      
     };
 
     await addTarea(obj)
