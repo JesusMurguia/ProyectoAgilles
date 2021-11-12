@@ -6,28 +6,56 @@ const Tablero = (props) => {
   const { updateTareas } = useAuth();
   const [tareasPendientes, setTareasPendientes] = useState([]);
   const [tareasProgreso, setTareasProgreso] = useState([]);
-  const [tareas, setTareas] = useState([]);
+  const [tareasTerminadas, setTareasTerminadas] = useState([]);
 
   const getTareas = useCallback(async () => {
     let tareasPendientes = [];
     let tareasProgreso = [];
-    const tareas = props.tareasList.map((tarea, index) => {
+    let tareasTerminadas = [];
+
+    props.tareasList.forEach((tarea, index) => {
       tarea.index = index;
-      tarea.estado === "progreso"
-        ? tareasProgreso.push(tarea)
-        : tareasPendientes.push(tarea);
-      return tarea;
+
+      switch (tarea.estado) {
+        case "progreso":
+          tareasProgreso.push(tarea);
+          break;
+        case "pendiente":
+          tareasPendientes.push(tarea);
+          break;
+        case "terminada":
+          tareasTerminadas.push(tarea);
+          break;
+        default:
+      }
     });
-    setTareas(tareas);
+
     setTareasPendientes(tareasPendientes);
     setTareasProgreso(tareasProgreso);
+    setTareasTerminadas(tareasTerminadas);
   }, [props.tareasList]);
+
+  const asignarEstado = (index, estado, from) => {
+    switch (from) {
+      case "sortable-pendiente":
+        tareasPendientes[index].estado = estado;
+        break;
+      case "sortable-progreso":
+        tareasProgreso[index].estado = estado;
+        break;
+      case "sortable-terminada":
+        tareasTerminadas[index].estado = estado;
+        break;
+      default:
+    }
+  };
 
   useEffect(() => {
     getTareas();
     return () => {
       setTareasPendientes([]);
       setTareasProgreso([]);
+      setTareasTerminadas([]);
     };
   }, [getTareas]);
 
@@ -37,28 +65,17 @@ const Tablero = (props) => {
         {/*Mostrar tareas en pendiente */}
         <Container className="container-sort">
           <ReactSortable
-            className="sortable"
+            className="sortable-pendiente"
             list={tareasPendientes}
             setList={setTareasPendientes}
             group="shared-group-name"
             onEnd={async () => {
-              console.log("move to up or down pendientes");
-              console.log(tareasPendientes.concat(tareasProgreso));
-              await updateTareas(tareasPendientes.concat(tareasProgreso));
+              await updateTareas(
+                tareasPendientes.concat(tareasProgreso, tareasTerminadas)
+              );
             }}
             onAdd={async (evt) => {
-              console.log("move to pendiente");
-              console.log(tareasProgreso);
-              console.log(evt.item);
-              console.log(evt.oldIndex);
-              tareasProgreso[evt.oldIndex].estado = "pendiente";
-
-              //obtener el nombre de la tarea
-              //   console.log(evt.item.querySelector("h3").innerText);
-              //obtener la descripcion de la tarea
-              //  console.log(evt.item.querySelector("p").innerText);
-              //tareasProgreso[evt.item.dataset.id].estado = "pendiente";
-              // await updateTareas(tareasPendientes.concat(tareasProgreso));
+              asignarEstado(evt.oldIndex, "pendiente", evt.from.className);
             }}
           >
             {tareasPendientes.map((tarea) => (
@@ -77,32 +94,49 @@ const Tablero = (props) => {
         {/*Mostrar tareas en progreso */}
         <Container className="container-sort">
           <ReactSortable
-            className="sortable"
+            className="sortable-progreso"
             list={tareasProgreso}
             setList={setTareasProgreso}
             group="shared-group-name"
             onAdd={async (evt) => {
-              console.log("move to progreso");
-              console.log(tareasPendientes);
-              console.log(evt.item);
-              console.log(evt.oldIndex);
-
-              tareasPendientes[evt.oldIndex].estado = "progreso";
-              //obtener el nombre de la tarea
-              //   console.log(evt.item.querySelector("h3").innerText);
-              //obtener la descripcion de la tarea
-              // console.log(evt.item.querySelector("p").innerText);
-              //tareasPendientes[evt.item.dataset.id].estado = "progreso";
-              //  await updateTareas(tareasProgreso.concat(tareasPendientes));
+              asignarEstado(evt.oldIndex, "progreso", evt.from.className);
             }}
             onEnd={async () => {
-              console.log("move to up or down progreso");
-              console.log(tareasPendientes.concat(tareasProgreso));
-
-              await updateTareas(tareasPendientes.concat(tareasProgreso));
+              await updateTareas(
+                tareasPendientes.concat(tareasProgreso, tareasTerminadas)
+              );
             }}
           >
             {tareasProgreso.map((tarea) => (
+              <Container key={tarea.index} className="list-container">
+                <Col className="text-list-container">
+                  <h3>{tarea.nombre}</h3>
+                  <p>{tarea.descripcion}</p>
+                  <p>{tarea.estado}</p>
+                </Col>
+              </Container>
+            ))}
+          </ReactSortable>
+        </Container>
+      </Col>
+      <Col>
+        {/*Mostrar tareas terminadas */}
+        <Container className="container-sort">
+          <ReactSortable
+            className="sortable-terminada"
+            list={tareasTerminadas}
+            setList={setTareasTerminadas}
+            group="shared-group-name"
+            onAdd={async (evt) => {
+              asignarEstado(evt.oldIndex, "terminada", evt.from.className);
+            }}
+            onEnd={async () => {
+              await updateTareas(
+                tareasPendientes.concat(tareasProgreso, tareasTerminadas)
+              );
+            }}
+          >
+            {tareasTerminadas.map((tarea) => (
               <Container key={tarea.index} className="list-container">
                 <Col className="text-list-container">
                   <h3>{tarea.nombre}</h3>
