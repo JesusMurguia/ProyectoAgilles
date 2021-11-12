@@ -59,7 +59,7 @@ const CoutDown = ({ tareaProgreso }) => {
           </Row>
         </Card.Body>
       </Card>
-      {/* MODAL DE EXITO */}
+      {/* MODAL DE ADVERTENCIA */}
       <SuccessModal
         title={"No hay tarea en progreso"}
         show={showMessage}
