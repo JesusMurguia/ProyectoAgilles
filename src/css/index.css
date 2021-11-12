@@ -36,7 +36,6 @@ button:hover {
 }
 
 .list-container {
-  display: flex;
   border: aliceblue solid 1px;
   padding: 0;
   border-radius: 4px;

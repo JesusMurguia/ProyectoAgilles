@@ -136,7 +136,6 @@ const Tablero = (props) => {
               group="shared-group-name"
               onAdd={async (evt) => {
                 setShowMessageExito(true);
-
                 asignarEstado(evt.oldIndex, "terminada", evt.from.className);
               }}
               onEnd={async () => {
