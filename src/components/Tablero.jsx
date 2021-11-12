@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect } from "react";
 import { ReactSortable } from "react-sortablejs";
 import { Container, Col, Row } from "react-bootstrap";
 import { useAuth } from "../hooks/useAuth";
+
 const Tablero = (props) => {
   const { updateTareas } = useAuth();
   const [tareasPendientes, setTareasPendientes] = useState([]);
@@ -97,6 +98,7 @@ const Tablero = (props) => {
             className="sortable-progreso"
             list={tareasProgreso}
             setList={setTareasProgreso}
+            draggable=".list-container"
             group="shared-group-name"
             onAdd={async (evt) => {
               asignarEstado(evt.oldIndex, "progreso", evt.from.className);
@@ -109,11 +111,15 @@ const Tablero = (props) => {
           >
             {tareasProgreso.map((tarea) => (
               <Container key={tarea.index} className="list-container">
-                <Col className="text-list-container">
-                  <h3>{tarea.nombre}</h3>
-                  <p>{tarea.descripcion}</p>
-                  <p>{tarea.estado}</p>
-                </Col>
+                <Row>
+                  <Col className="text-list-container">
+                    <h3>{tarea.nombre}</h3>
+                    <p>{tarea.descripcion}</p>
+                    <p>{tarea.estado}</p>
+
+                  
+                  </Col>
+                </Row>
               </Container>
             ))}
           </ReactSortable>

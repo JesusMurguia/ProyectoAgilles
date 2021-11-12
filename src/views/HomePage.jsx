@@ -5,7 +5,7 @@ import AddForm from "../components/AddForm";
 import SuccessModal from "../components/SuccessModal";
 import { useAuth } from "../hooks/useAuth";
 import Tablero from "../components/Tablero";
-
+import CoutDown from "../components/CoutDown";
 const HomePage = () => {
   const { user } = useAuth();
 
@@ -20,6 +20,7 @@ const HomePage = () => {
 
   return (
     <Container>
+      <CoutDown tareaProgreso={user.tareas} />
       <div className="d-flex justify-content-center align-items-center mb-5">
         <h1 className="tareas-title">Tareas</h1>
         <button
@@ -59,6 +60,7 @@ TABLERO DONDE SE MUESTRA LAS TAREAS PENDIENTES Y TAREAS EN PROGRESO
 
       {/* MODAL DE EXITO */}
       <SuccessModal
+        title={"Tarea registrada correctamente!"}
         show={showSuccessModal}
         onHide={() => {
           setShowSuccessModal(false);

@@ -9,7 +9,7 @@ function SuccessModal(props) {
     >
       <Modal.Header></Modal.Header>
       <Modal.Body>
-        <h4>Tarea registrada correctamente!</h4>
+        <h4>{props.title}</h4>
       </Modal.Body>
       <Modal.Footer className="d-flex justify-content-center">
         <Button onClick={props.onHide} variant="outline-light">

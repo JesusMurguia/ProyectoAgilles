@@ -119,12 +119,45 @@ button:hover {
   border: 1px solid aliceblue;
 }
 
-.sortable-chosen {
-  background-color: aliceblue;
-  color: #20232a;
-  border-color: #20232a;
-}
-
 .list-container {
   text-align: center;
+}
+
+/* COUT DOWN */
+
+.time {
+  font-size: 3rem;
+  padding: 2rem;
+}
+
+.button {
+  padding: 0.6rem 1.5rem;
+  margin: 0.4rem;
+  border-radius: 3px;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 0.8rem;
+  border-style: groove;
+  width: 100%;
+}
+
+.button:focus {
+  outline-width: 0;
+}
+
+.button-primary:hover {
+  background-color: #2641d4;
+  border: 1px solid #1b1f2b;
+}
+
+.button-primary-active {
+  background-color: #3151ff;
+  border: 1px solid #152684;
+  color: white;
+}
+
+.button-primary-inactive {
+  background-color: #3151ff;
+  border: 1px solid #152684;
+  color: white;
 }
