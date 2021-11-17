@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { ReactSortable } from "react-sortablejs";
 import { Container, Col, Row } from "react-bootstrap";
 import { useAuth } from "../hooks/useAuth";
@@ -6,12 +6,28 @@ import SuccessModal from "./SuccessModal";
 
 const Tablero = (props) => {
   const { updateTareas } = useAuth();
+
   const [tareasPendientes, setTareasPendientes] = useState([]);
   const [tareasProgreso, setTareasProgreso] = useState([]);
   const [tareasTerminadas, setTareasTerminadas] = useState([]);
   const [showMessageExito, setShowMessageExito] = useState(false);
 
-  const getTareas = useCallback(async () => {
+  const asignarEstado = (index, estado, from) => {
+    switch (from) {
+      case "sortable-pendiente":
+        tareasPendientes[index].estado = estado;
+        break;
+      case "sortable-progreso":
+        tareasProgreso[index].estado = estado;
+        break;
+      case "sortable-terminada":
+        tareasTerminadas[index].estado = estado;
+        break;
+      default:
+    }
+  };
+
+  const getTareas = () => {
     let tareasPendientes = [];
     let tareasProgreso = [];
     let tareasTerminadas = [];
@@ -36,23 +52,7 @@ const Tablero = (props) => {
     setTareasPendientes(tareasPendientes);
     setTareasProgreso(tareasProgreso);
     setTareasTerminadas(tareasTerminadas);
-  }, [props.tareasList]);
-
-  const asignarEstado = (index, estado, from) => {
-    switch (from) {
-      case "sortable-pendiente":
-        tareasPendientes[index].estado = estado;
-        break;
-      case "sortable-progreso":
-        tareasProgreso[index].estado = estado;
-        break;
-      case "sortable-terminada":
-        tareasTerminadas[index].estado = estado;
-        break;
-      default:
-    }
   };
-
   useEffect(() => {
     getTareas();
     return () => {
@@ -60,8 +60,7 @@ const Tablero = (props) => {
       setTareasProgreso([]);
       setTareasTerminadas([]);
     };
-  }, [getTareas]);
-
+  }, []);
   return (
     <>
       <Row>
@@ -74,11 +73,13 @@ const Tablero = (props) => {
               setList={setTareasPendientes}
               group="shared-group-name"
               onEnd={async () => {
-                await updateTareas(
-                  tareasPendientes.concat(tareasProgreso, tareasTerminadas)
-                );
+                {
+                  await updateTareas(
+                    tareasPendientes.concat(tareasProgreso, tareasTerminadas)
+                  );
+                }
               }}
-              onAdd={async (evt) => {
+              onAdd={(evt) => {
                 asignarEstado(evt.oldIndex, "pendiente", evt.from.className);
               }}
             >
@@ -103,13 +104,15 @@ const Tablero = (props) => {
               setList={setTareasProgreso}
               draggable=".list-container"
               group="shared-group-name"
-              onAdd={async (evt) => {
+              onAdd={(evt) => {
                 asignarEstado(evt.oldIndex, "progreso", evt.from.className);
               }}
               onEnd={async () => {
-                await updateTareas(
-                  tareasPendientes.concat(tareasProgreso, tareasTerminadas)
-                );
+                {
+                  await updateTareas(
+                    tareasPendientes.concat(tareasProgreso, tareasTerminadas)
+                  );
+                }
               }}
             >
               {tareasProgreso.map((tarea) => (
@@ -134,14 +137,16 @@ const Tablero = (props) => {
               list={tareasTerminadas}
               setList={setTareasTerminadas}
               group="shared-group-name"
-              onAdd={async (evt) => {
+              onAdd={(evt) => {
                 setShowMessageExito(true);
                 asignarEstado(evt.oldIndex, "terminada", evt.from.className);
               }}
               onEnd={async () => {
-                await updateTareas(
-                  tareasPendientes.concat(tareasProgreso, tareasTerminadas)
-                );
+                {
+                  await updateTareas(
+                    tareasPendientes.concat(tareasProgreso, tareasTerminadas)
+                  );
+                }
               }}
             >
               {tareasTerminadas.map((tarea) => (

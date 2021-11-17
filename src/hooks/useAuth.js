@@ -68,8 +68,10 @@ export const AuthProvider = ({ children }) => {
     if (!user) {
       return false;
     }
+
     const userRef = firebase.firestore().collection("users").doc(user.uid);
     const snap = await userRef.get();
+
     return snap.exists ? snap.data() : false;
   };
 
@@ -119,7 +121,7 @@ export const AuthProvider = ({ children }) => {
             },
           ],
         });
-        setUser(await getUserDocument(user));
+        //  setUser(await getUserDocument(user));
       } else {
         const tareas = snap.data().tareas;
         const nombres = tareas.map((tarea) => tarea.nombre);
@@ -134,7 +136,7 @@ export const AuthProvider = ({ children }) => {
             estado: tarea.estado.toString(),
           });
           await userRef.update({ tareas });
-          setUser(await getUserDocument(user));
+          // setUser(await getUserDocument(user));
         } else {
           throw new Error("Tarea ya existe");
         }
@@ -143,7 +145,6 @@ export const AuthProvider = ({ children }) => {
   };
 
   const updateTareas = async (tareasList) => {
-    console.log(tareasList);
     let tareas = tareasList.map((tarea) => {
       return {
         nombre: tarea.nombre.toString(),
@@ -155,7 +156,7 @@ export const AuthProvider = ({ children }) => {
     const snap = await userRef.get();
     if (snap.exists) {
       await userRef.update({ tareas });
-      setUser(await getUserDocument(user));
+      //setUser(await getUserDocument(user));
     }
   };
 
@@ -182,6 +183,8 @@ export const AuthProvider = ({ children }) => {
     addTarea,
     updateTareas,
     logout,
+    firebase,
+    getUserDocument,
   };
 
   return (

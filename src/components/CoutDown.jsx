@@ -1,31 +1,33 @@
 import React, { useState, useEffect } from "react";
-import { Container, Col, Row, Card, Button } from "react-bootstrap";
+import { Col, Row, Card, Button } from "react-bootstrap";
 import SuccessModal from "./SuccessModal";
 import Notificacion from "./Notificacion";
-import { ToastContainer, toast } from "react-toastify";
-import { css } from "glamor";
-const CoutDown = ({ tareaProgreso }) => {
+import { toast } from "react-toastify";
+
+import { useAuth } from "../hooks/useAuth";
+const CoutDown = ({ tareasList }) => {
+  const { getUserDocument, user } = useAuth();
   const [seconds, setSeconds] = useState(0);
   const [isActive, setIsActive] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
   const [showMessage, setShowMessage] = useState(false);
   const SECONDS = 10;
 
-  function toggle() {
-    const isProgreso = tareaProgreso.filter(
-      (item) => item.estado == "progreso"
-    );
+  const getTasks = async () => {
+    await getUserDocument(user).then((value) => {
+      const isProgreso = value.tareas.filter(
+        (item) => item.estado == "progreso"
+      );
 
-    if (isProgreso.length >= 1) {
-      if (!isActive && seconds == 0) {
-        dismissAll();
+      if (isProgreso.length >= 1) {
+        if (!isActive && seconds == 0) {
+          dismissAll();
+        }
+        setIsActive(!isActive);
+      } else {
+        setShowMessage(true);
       }
-      setIsActive(!isActive);
-    } else {
-      setShowMessage(true);
-    }
-  }
-
+    });
+  };
   function reset() {
     setSeconds(0);
     setIsActive(false);
@@ -47,7 +49,6 @@ const CoutDown = ({ tareaProgreso }) => {
         }
       }, 1000);
     } else if (!isActive && seconds !== 0) {
-      console.log("paused");
       //setIsPaused(true);
       clearInterval(interval);
     }
@@ -68,7 +69,7 @@ const CoutDown = ({ tareaProgreso }) => {
                 className={`button button-primary button-primary-${
                   isActive ? "active" : "inactive"
                 }`}
-                onClick={toggle}
+                onClick={getTasks}
               >
                 {isActive ? "Pause" : "Start"}
               </button>
