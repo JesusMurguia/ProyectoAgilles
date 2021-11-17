@@ -16,11 +16,13 @@ const HomePage = () => {
   const [isClickAddTask, setIsClickAddTask] = useState(false);
   const [tasks, setTasks] = useState([]);
   const [isLoading, setIsloading] = useState(true);
+  const [isMoveProgresTask, setIsMoveProgresTask] = useState(false);
 
   //se abre el form de agregar tareas
   const handleAddTask = (game) => {
     setShowAddForm(game);
   };
+
   const getTasks = async () => {
     await getUserDocument(user).then((value) => {
       setTasks(value.tareas);
@@ -30,19 +32,28 @@ const HomePage = () => {
   };
   const IsTablero = () => {
     if (tasks && tasks.length > 0) {
-      return <Tablero tareasList={tasks} />;
+      return (
+        <Tablero
+          setIsMoveProgresTask={setIsMoveProgresTask}
+          isMoveProgresTask={isMoveProgresTask}
+          tareasList={tasks}
+        />
+      );
     } else if (!isLoading) {
       return <h3 className="text-center">No hay tareas</h3>;
     } else {
       return <h3 className="text-center">Cargando...</h3>;
     }
   };
+
+  //use effect para saber cuando se agrego una nueva tarea
   useEffect(() => {
     getTasks();
   }, [isClickAddTask]);
+
   return (
     <Container>
-      <CoutDown tareasList={tasks} />
+      <CoutDown tareasList={tasks} isMoveProgresTask={isMoveProgresTask} />
       <div className="d-flex justify-content-center align-items-center mb-5">
         <h1 className="tareas-title">Tareas</h1>
         <button

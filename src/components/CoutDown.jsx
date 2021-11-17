@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Col, Row, Card, Button } from "react-bootstrap";
 import SuccessModal from "./SuccessModal";
 import Notificacion from "./Notificacion";
 import { toast } from "react-toastify";
 
 import { useAuth } from "../hooks/useAuth";
-const CoutDown = ({ tareasList }) => {
+const CoutDown = ({ tareasList, isMoveProgresTask }) => {
   const { getUserDocument, user } = useAuth();
   const [seconds, setSeconds] = useState(0);
   const [isActive, setIsActive] = useState(false);
@@ -32,7 +32,15 @@ const CoutDown = ({ tareasList }) => {
     setSeconds(0);
     setIsActive(false);
   }
+  const offCoutDown = useCallback(async () => {
+    console.log("reiniciando cout");
+    setSeconds(0);
+    setIsActive(false);
+  }, [isMoveProgresTask]);
 
+  useEffect(() => {
+    offCoutDown();
+  }, [offCoutDown]);
   const dismissAll = () => toast.dismiss();
   useEffect(() => {
     let interval = null;

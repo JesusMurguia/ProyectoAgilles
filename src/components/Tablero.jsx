@@ -18,7 +18,9 @@ const Tablero = (props) => {
         tareasPendientes[index].estado = estado;
         break;
       case "sortable-progreso":
+        console.log("se movio de tarea progreso");
         tareasProgreso[index].estado = estado;
+        props.setIsMoveProgresTask(!props.isMoveProgresTask);
         break;
       case "sortable-terminada":
         tareasTerminadas[index].estado = estado;
