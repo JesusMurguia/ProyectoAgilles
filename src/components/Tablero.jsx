@@ -4,6 +4,11 @@ import { Container, Col, Row } from "react-bootstrap";
 import { useAuth } from "../hooks/useAuth";
 import SuccessModal from "./SuccessModal";
 
+const formatDate = (date) => {
+  const dateObject = new Date(Number(date));
+  return dateObject.toLocaleString();
+};
+
 const Tablero = (props) => {
   const { updateTareas } = useAuth();
 
@@ -20,7 +25,11 @@ const Tablero = (props) => {
       case "sortable-progreso":
         console.log("se movio de tarea progreso");
         tareasProgreso[index].estado = estado;
-        props.setIsMoveProgresTask(!props.isMoveProgresTask);
+        if (estado === "terminada") {
+          let date = new Date();
+          tareasProgreso[index].fechaTerminada = date.getTime();
+        }
+        //props.setIsMoveProgresTask(!props.isMoveProgresTask);
         break;
       case "sortable-terminada":
         tareasTerminadas[index].estado = estado;
@@ -139,7 +148,7 @@ const Tablero = (props) => {
               list={tareasTerminadas}
               setList={setTareasTerminadas}
               group="shared-group-name"
-              onAdd={(evt) => {
+              onAdd={async (evt) => {
                 setShowMessageExito(true);
                 asignarEstado(evt.oldIndex, "terminada", evt.from.className);
               }}
@@ -156,6 +165,7 @@ const Tablero = (props) => {
                   <Col className="text-list-container">
                     <h3>{tarea.nombre}</h3>
                     <p>{tarea.descripcion}</p>
+                    <p>{formatDate(tarea.fechaTerminada)}</p>
                     <p>{tarea.estado}</p>
                   </Col>
                 </Container>

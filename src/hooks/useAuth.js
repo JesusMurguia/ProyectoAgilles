@@ -118,6 +118,9 @@ export const AuthProvider = ({ children }) => {
               nombre: tarea.nombre.toString(),
               descripcion: tarea.descripcion.toString(),
               estado: tarea.estado.toString(),
+              fechaTerminada: tarea.fechaTerminada
+                ? tarea.fechaTerminada.toString()
+                : "no ha terminado",
             },
           ],
         });
@@ -134,6 +137,9 @@ export const AuthProvider = ({ children }) => {
             nombre: tarea.nombre.toString(),
             descripcion: tarea.descripcion.toString(),
             estado: tarea.estado.toString(),
+            fechaTerminada: tarea.fechaTerminada
+              ? tarea.fechaTerminada.toString()
+              : "no ha terminado",
           });
           await userRef.update({ tareas });
           // setUser(await getUserDocument(user));
@@ -150,6 +156,9 @@ export const AuthProvider = ({ children }) => {
         nombre: tarea.nombre.toString(),
         descripcion: tarea.descripcion.toString(),
         estado: tarea.estado.toString(),
+        fechaTerminada: tarea.fechaTerminada
+          ? tarea.fechaTerminada.toString()
+          : "no ha terminado",
       };
     });
     const userRef = firebase.firestore().collection("users").doc(user.uid);
