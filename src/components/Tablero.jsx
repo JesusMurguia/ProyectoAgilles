@@ -4,6 +4,11 @@ import { Container, Col, Row } from "react-bootstrap";
 import { useAuth } from "../hooks/useAuth";
 import SuccessModal from "./SuccessModal";
 
+const formatDate = (date) => {
+  const dateObject = new Date(Number(date));
+  return dateObject.toLocaleString();
+};
+
 const Tablero = (props) => {
   const { updateTareas } = useAuth();
 
@@ -21,7 +26,11 @@ const Tablero = (props) => {
       case "sortable-progreso":
         console.log("se movio de tarea progreso");
         tareasProgreso[index].estado = estado;
-
+        if (estado === "terminada") {
+          let date = new Date();
+          tareasProgreso[index].fechaTerminada = date.getTime();
+        }
+        //props.setIsMoveProgresTask(!props.isMoveProgresTask);
         break;
       case "sortable-terminada":
         setIsTargetFinished(true);
@@ -31,37 +40,47 @@ const Tablero = (props) => {
     }
   };
 
+  const getTareas = () => {
+    let tareasPendientes = [];
+    let tareasProgreso = [];
+    let tareasTerminadas = [];
+
+    props.tareasList.forEach((tarea, index) => {
+      tarea.index = index;
+
+      switch (tarea.estado) {
+        case "progreso":
+          tareasProgreso.push(tarea);
+          break;
+        case "pendiente":
+          tareasPendientes.push(tarea);
+          break;
+        case "terminada":
+          tareasTerminadas.push(tarea);
+          break;
+        default:
+      }
+    });
+
+    setTareasPendientes(tareasPendientes);
+    setTareasProgreso(tareasProgreso);
+
+    const sortedTareasTerminadas = tareasTerminadas.sort((a, b) => {
+      return b.fechaTerminada - a.fechaTerminada;
+    });
+
+    setTareasTerminadas(sortedTareasTerminadas);
+  };
   useEffect(() => {
     if (localStorage.getItem("setShowMessageExito") == "true") {
       setShowMessageExito(true);
     }
-    const getTareas = () => {
-      let tareasPendientes = [];
-      let tareasProgreso = [];
-      let tareasTerminadas = [];
-
-      props.tareasList.forEach((tarea, index) => {
-        tarea.index = index;
-
-        switch (tarea.estado) {
-          case "progreso":
-            tareasProgreso.push(tarea);
-            break;
-          case "pendiente":
-            tareasPendientes.push(tarea);
-            break;
-          case "terminada":
-            tareasTerminadas.push(tarea);
-            break;
-          default:
-        }
-      });
-
-      setTareasPendientes(tareasPendientes);
-      setTareasProgreso(tareasProgreso);
-      setTareasTerminadas(tareasTerminadas);
-    };
     getTareas();
+    return () => {
+      setTareasPendientes([]);
+      setTareasProgreso([]);
+      setTareasTerminadas([]);
+    };
   }, [props.tareasList]);
   return (
     <>
@@ -169,6 +188,7 @@ const Tablero = (props) => {
                   <Col className="text-list-container">
                     <h3>{tarea.nombre}</h3>
                     <p>{tarea.descripcion}</p>
+                    <p>{formatDate(tarea.fechaTerminada)}</p>
                     <p>{tarea.estado}</p>
                   </Col>
                 </Container>
