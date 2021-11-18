@@ -10,7 +10,7 @@ const CoutDown = ({ tareasList, isMoveProgresTask }) => {
   const [seconds, setSeconds] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const [showMessage, setShowMessage] = useState(false);
-  const SECONDS = 10;
+  const SECONDS = 60;
 
   const getTasks = async () => {
     await getUserDocument(user).then((value) => {
@@ -23,6 +23,7 @@ const CoutDown = ({ tareasList, isMoveProgresTask }) => {
           dismissAll();
         }
         setIsActive(!isActive);
+        localStorage.setItem("isCountDownActive", true);
       } else {
         setShowMessage(true);
       }
@@ -31,11 +32,10 @@ const CoutDown = ({ tareasList, isMoveProgresTask }) => {
   function reset() {
     setSeconds(0);
     setIsActive(false);
+    localStorage.setItem("isCountDownActive", false);
   }
   const offCoutDown = useCallback(async () => {
-    console.log("reiniciando cout");
-    setSeconds(0);
-    setIsActive(false);
+    reset();
   }, [isMoveProgresTask]);
 
   useEffect(() => {

@@ -32,22 +32,25 @@ const HomePage = () => {
   };
   const IsTablero = () => {
     if (tasks && tasks.length > 0) {
+      console.log("first if");
       return (
         <Tablero
           setIsMoveProgresTask={setIsMoveProgresTask}
           isMoveProgresTask={isMoveProgresTask}
           tareasList={tasks}
+          setTasks={setTasks}
         />
       );
     } else if (!isLoading) {
       return <h3 className="text-center">No hay tareas</h3>;
-    } else {
+    } else if (isLoading) {
       return <h3 className="text-center">Cargando...</h3>;
     }
   };
 
   //use effect para saber cuando se agrego una nueva tarea
   useEffect(() => {
+    console.log("usse effect home");
     getTasks();
   }, [isClickAddTask]);
 
@@ -71,7 +74,7 @@ TABLERO DONDE SE MUESTRA LAS TAREAS PENDIENTES Y TAREAS EN PROGRESO
       {/* FORM PARA AGREGAR UNA TAREA */}
       <AddForm
         game={showAddForm}
-        setIsClickAddTask={setIsClickAddTask}
+        getTasks={getTasks}
         animation={false}
         show={Boolean(showAddForm)}
         onHide={() => {
