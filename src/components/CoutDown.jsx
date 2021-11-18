@@ -9,6 +9,7 @@ const CoutDown = ({ tareasList, isMoveProgresTask }) => {
   const { getUserDocument, user } = useAuth();
   const [seconds, setSeconds] = useState(0);
   const [isActive, setIsActive] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
   const [showMessage, setShowMessage] = useState(false);
   const SECONDS = 60;
 
@@ -45,10 +46,17 @@ const CoutDown = ({ tareasList, isMoveProgresTask }) => {
   useEffect(() => {
     let interval = null;
     if (isActive) {
+      localStorage.setItem("isCountDownActive", true);
       interval = setInterval(() => {
         //mostrar notificacion 5 seg antes
         if (seconds == SECONDS - 6) {
           toast("El pomodoro esta por terminarse");
+          toast.info("El pomodoro esta por terminarse", {
+            position: "bottom-right",
+            hideProgressBar: false,
+            closeOnClick: true,
+            progress: undefined,
+          });
         }
         if (seconds == SECONDS) {
           reset();
@@ -57,7 +65,17 @@ const CoutDown = ({ tareasList, isMoveProgresTask }) => {
         }
       }, 1000);
     } else if (!isActive && seconds !== 0) {
-      //setIsPaused(true);
+      toast.info("El pomodoro se a pausado", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      setIsPaused(true);
+      localStorage.setItem("isCountDownActive", "paused");
       clearInterval(interval);
     }
     return () => clearInterval(interval);
@@ -65,6 +83,16 @@ const CoutDown = ({ tareasList, isMoveProgresTask }) => {
   const multipleOnclick = () => {
     reset();
     dismissAll();
+  };
+
+  const mostrarBtn = () => {
+    if (isActive) {
+      return "Pause";
+    } else if (!isActive && seconds == 0) {
+      return "Start";
+    } else if (!isActive && seconds != 0) {
+      return "Reanudar";
+    }
   };
   return (
     <>
@@ -79,7 +107,7 @@ const CoutDown = ({ tareasList, isMoveProgresTask }) => {
                 }`}
                 onClick={getTasks}
               >
-                {isActive ? "Pause" : "Start"}
+                {mostrarBtn()}
               </button>
             </Col>
             <Col xs={5} sm={4} md={3}>
@@ -98,7 +126,7 @@ const CoutDown = ({ tareasList, isMoveProgresTask }) => {
           setShowMessage(false);
         }}
       ></SuccessModal>
-      <Notificacion setActive={setIsActive} />
+      <Notificacion setActive={setIsActive} isPaused={isPaused} />
     </>
   );
 };

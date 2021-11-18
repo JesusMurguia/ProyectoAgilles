@@ -1,12 +1,16 @@
-import React from "react";
-
 import { ToastContainer, toast } from "react-toastify";
+import React, { useState, useEffect, useCallback } from "react";
+
 import "react-toastify/dist/ReactToastify.css";
 
-function Notificacion({ setActive }) {
+function Notificacion({ setActive, propsIsPaused }) {
+  const [isPaused, setIsPaused] = useState(false);
   const setActiveButton = () => {
-    setActive(true);
+    if (localStorage.getItem("isCountDownActive") != "paused") {
+      setActive(true);
+    }
   };
+
   const closeButton = ({ closeToast }) => (
     <button
       onClick={(closeToast, setActiveButton)}

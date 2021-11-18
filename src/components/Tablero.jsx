@@ -134,7 +134,10 @@ const Tablero = (props) => {
                     tareasPendientes.concat(tareasProgreso, tareasTerminadas)
                   ).then(() => {
                     // console.log(e.from.className);
-                    if (localStorage.getItem("isCountDownActive") == "true") {
+                    if (
+                      localStorage.getItem("isCountDownActive") == "true" ||
+                      localStorage.getItem("isCountDownActive") == "paused"
+                    ) {
                       props.setTasks(
                         tareasPendientes.concat(
                           tareasProgreso,
