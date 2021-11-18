@@ -62,7 +62,12 @@ const Tablero = (props) => {
 
     setTareasPendientes(tareasPendientes);
     setTareasProgreso(tareasProgreso);
-    setTareasTerminadas(tareasTerminadas);
+
+    const sortedTareasTerminadas = tareasTerminadas.sort((a, b) => {
+      return b.fechaTerminada - a.fechaTerminada;
+    });
+
+    setTareasTerminadas(sortedTareasTerminadas);
   };
   useEffect(() => {
     getTareas();
