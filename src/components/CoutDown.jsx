@@ -8,10 +8,12 @@ import { useAuth } from "../hooks/useAuth";
 const CoutDown = ({ tareasList, isMoveProgresTask }) => {
   const { getUserDocument, user } = useAuth();
   const [seconds, setSeconds] = useState(0);
+  const [secondsAux, setSecondsAux] = useState(0);
+  const [minuts, setMinuts] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [showMessage, setShowMessage] = useState(false);
-  const SECONDS = 60;
+  const SECONDS = 1200;
 
   const getTasks = async () => {
     await getUserDocument(user).then((value) => {
@@ -32,6 +34,7 @@ const CoutDown = ({ tareasList, isMoveProgresTask }) => {
   };
   function reset() {
     setSeconds(0);
+    setMinuts(0);
     setIsActive(false);
     localStorage.setItem("isCountDownActive", false);
   }
@@ -43,25 +46,53 @@ const CoutDown = ({ tareasList, isMoveProgresTask }) => {
     offCoutDown();
   }, [offCoutDown]);
   const dismissAll = () => toast.dismiss();
+
+  const CloseButtonTerminado = ({ closeToast }) => (
+    <button
+      onClick={(closeToast, setActiveButton)}
+      className="Toastify__close-button Toastify__close-button--light"
+    >
+      <i>omitir</i>
+    </button>
+  );
+  const setActiveButton = () => {
+    if (localStorage.getItem("isCountDownActive") != "paused") {
+      setIsActive(true);
+    }
+  };
   useEffect(() => {
     let interval = null;
     if (isActive) {
       localStorage.setItem("isCountDownActive", true);
       interval = setInterval(() => {
         //mostrar notificacion 5 seg antes
-        if (seconds == SECONDS - 6) {
-          toast("El pomodoro esta por terminarse");
-          toast.info("El pomodoro esta por terminarse", {
-            position: "bottom-right",
-            hideProgressBar: false,
-            closeOnClick: true,
-            progress: undefined,
-          });
+        console.log(secondsAux);
+        if (minuts * 60 + seconds == SECONDS - 6) {
+          toast.info("El pomodoro esta por terminarse");
         }
-        if (seconds == SECONDS) {
+        if (minuts * 60 + seconds == SECONDS) {
+          localStorage.setItem("isCountDownActive", "terminado");
           reset();
+          dismissAll();
+          toast.info(
+            "El pomodoro se a terminado, puede tomar un descanso de 5 minutos o preisone 'omitir'",
+            {
+              position: "bottom-right",
+              autoClose: 300000,
+              hideProgressBar: false,
+              pauseOnHover: false,
+              progress: undefined,
+              closeButton: CloseButtonTerminado,
+              onClose: () => setIsActive(true),
+            }
+          );
         } else {
           setSeconds((seconds) => seconds + 1);
+
+          if (seconds == 60) {
+            setMinuts((minuts) => minuts + 1);
+            setSeconds(0);
+          }
         }
       }, 1000);
     } else if (!isActive && seconds !== 0) {
@@ -94,11 +125,17 @@ const CoutDown = ({ tareasList, isMoveProgresTask }) => {
       return "Reanudar";
     }
   };
+
+  const showTimer = () => {};
+
   return (
     <>
       <Card bg="danger" className="text-center">
         <Card.Body className="text-center">
-          <div className="time">{seconds}s</div>
+          <div className="time">
+            {minuts < 10 ? `0${minuts}` : minuts}:
+            {seconds < 10 ? `0${seconds}` : seconds}
+          </div>
           <Row className="justify-content-center">
             <Col xs={5} sm={4} md={3}>
               <button
