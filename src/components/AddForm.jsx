@@ -1,8 +1,8 @@
 import React from "react";
 import { Modal, Button, Form, Col, Row, Alert } from "react-bootstrap";
 import { useAuth } from "../hooks/useAuth";
-function AddForm(props, { setTaskList }) {
-  const { addTarea, user } = useAuth();
+function AddForm(props) {
+  const { addTarea } = useAuth();
 
   //se separa la funcion de setState de los props del modal para evitar un error de renderizado
   const {

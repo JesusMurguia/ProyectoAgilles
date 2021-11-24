@@ -1,9 +1,9 @@
-import { ToastContainer, toast } from "react-toastify";
-import React, { useState, useEffect, useCallback } from "react";
+import { ToastContainer } from "react-toastify";
+import React from "react";
 
 import "react-toastify/dist/ReactToastify.css";
 
-function Notificacion({ setActive }) {
+function Notificacion() {
   return (
     <div>
       <ToastContainer

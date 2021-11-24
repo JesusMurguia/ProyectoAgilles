@@ -16,7 +16,6 @@ const Tablero = (props) => {
   const [tareasProgreso, setTareasProgreso] = useState([]);
   const [tareasTerminadas, setTareasTerminadas] = useState([]);
   const [showMessageExito, setShowMessageExito] = useState(false);
-  const [isTargetFinished, setIsTargetFinished] = useState(false);
 
   const asignarEstado = (index, estado, from) => {
     switch (from) {
@@ -24,7 +23,6 @@ const Tablero = (props) => {
         tareasPendientes[index].estado = estado;
         break;
       case "sortable-progreso":
-        console.log("se movio de tarea progreso");
         tareasProgreso[index].estado = estado;
         if (estado === "terminada") {
           let date = new Date();
@@ -33,11 +31,24 @@ const Tablero = (props) => {
         //props.setIsMoveProgresTask(!props.isMoveProgresTask);
         break;
       case "sortable-terminada":
-        setIsTargetFinished(true);
         tareasTerminadas[index].estado = estado;
         break;
       default:
     }
+    //mostrar notificacion de exito al temrinar una tarea (cuando el timer no este funcionando)
+    if (
+      estado === "terminada" &&
+      localStorage.getItem("isCountDownActive") &&
+      localStorage.getItem("setShowMessageExito") === "true"
+    ) {
+      setShowMessageExito(true);
+    }
+  };
+
+  const onEnd = async () => {
+    await updateTareas(
+      tareasPendientes.concat(tareasProgreso, tareasTerminadas)
+    );
   };
 
   const getTareas = () => {
@@ -72,7 +83,8 @@ const Tablero = (props) => {
     setTareasTerminadas(sortedTareasTerminadas);
   };
   useEffect(() => {
-    if (localStorage.getItem("setShowMessageExito") == "true") {
+    //mostrar notificacion de exito al temrinar una tarea (cuando el timer este funcionando)
+    if (localStorage.getItem("setShowMessageExito") === "true") {
       setShowMessageExito(true);
     }
     getTareas();
@@ -93,13 +105,7 @@ const Tablero = (props) => {
               list={tareasPendientes}
               setList={setTareasPendientes}
               group="shared-group-name"
-              onEnd={async () => {
-                {
-                  await updateTareas(
-                    tareasPendientes.concat(tareasProgreso, tareasTerminadas)
-                  );
-                }
-              }}
+              onEnd={onEnd}
               onAdd={(evt) => {
                 asignarEstado(evt.oldIndex, "pendiente", evt.from.className);
               }}
@@ -135,8 +141,8 @@ const Tablero = (props) => {
                   ).then(() => {
                     // console.log(e.from.className);
                     if (
-                      localStorage.getItem("isCountDownActive") == "true" ||
-                      localStorage.getItem("isCountDownActive") == "paused"
+                      localStorage.getItem("isCountDownActive") === "true" ||
+                      localStorage.getItem("isCountDownActive") === "paused"
                     ) {
                       props.setTasks(
                         tareasPendientes.concat(
@@ -178,13 +184,7 @@ const Tablero = (props) => {
                 localStorage.setItem("setShowMessageExito", true);
                 asignarEstado(evt.oldIndex, "terminada", evt.from.className);
               }}
-              onEnd={async () => {
-                {
-                  await updateTareas(
-                    tareasPendientes.concat(tareasProgreso, tareasTerminadas)
-                  );
-                }
-              }}
+              onEnd={onEnd}
             >
               {tareasTerminadas.map((tarea) => (
                 <Container key={tarea.index} className="list-container">

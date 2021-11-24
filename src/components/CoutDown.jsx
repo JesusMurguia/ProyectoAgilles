@@ -1,28 +1,28 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Col, Row, Card, Button } from "react-bootstrap";
+import { Col, Row, Card } from "react-bootstrap";
 import SuccessModal from "./SuccessModal";
 import Notificacion from "./Notificacion";
 import { toast } from "react-toastify";
 
 import { useAuth } from "../hooks/useAuth";
-const CoutDown = ({ tareasList, isMoveProgresTask }) => {
+const CoutDown = ({ isMoveProgresTask }) => {
+  const SECONDS = 60;
+
   const { getUserDocument, user } = useAuth();
   const [seconds, setSeconds] = useState(0);
-  const [secondsAux, setSecondsAux] = useState(0);
-  const [minuts, setMinuts] = useState(0);
+  const [minuts, setMinuts] = useState(SECONDS / 60);
   const [isActive, setIsActive] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [showMessage, setShowMessage] = useState(false);
-  const SECONDS = 1200;
 
   const getTasks = async () => {
     await getUserDocument(user).then((value) => {
       const isProgreso = value.tareas.filter(
-        (item) => item.estado == "progreso"
+        (item) => item.estado === "progreso"
       );
 
       if (isProgreso.length >= 1) {
-        if (!isActive && seconds == 0) {
+        if (!isActive && seconds === 0) {
           dismissAll();
         }
         setIsActive(!isActive);
@@ -34,7 +34,7 @@ const CoutDown = ({ tareasList, isMoveProgresTask }) => {
   };
   function reset() {
     setSeconds(0);
-    setMinuts(0);
+    setMinuts(SECONDS / 60);
     setIsActive(false);
     localStorage.setItem("isCountDownActive", false);
   }
@@ -56,7 +56,7 @@ const CoutDown = ({ tareasList, isMoveProgresTask }) => {
     </button>
   );
   const setActiveButton = () => {
-    if (localStorage.getItem("isCountDownActive") != "paused") {
+    if (localStorage.getItem("isCountDownActive") !== "paused") {
       setIsActive(true);
     }
   };
@@ -66,12 +66,12 @@ const CoutDown = ({ tareasList, isMoveProgresTask }) => {
       localStorage.setItem("isCountDownActive", true);
       interval = setInterval(() => {
         //mostrar notificacion 5 seg antes
-        console.log(secondsAux);
-        if (minuts * 60 + seconds == SECONDS - 6) {
+        if (minuts * 60 + seconds === 6) {
           toast.info("El pomodoro esta por terminarse");
         }
-        if (minuts * 60 + seconds == SECONDS) {
-          localStorage.setItem("isCountDownActive", "terminado");
+
+        //saber si ya termino el pomodoro
+        if (minuts * 60 + seconds === 0) {
           reset();
           dismissAll();
           toast.info(
@@ -87,11 +87,11 @@ const CoutDown = ({ tareasList, isMoveProgresTask }) => {
             }
           );
         } else {
-          setSeconds((seconds) => seconds + 1);
+          setSeconds((seconds) => seconds - 1);
 
-          if (seconds == 60) {
-            setMinuts((minuts) => minuts + 1);
-            setSeconds(0);
+          if (seconds === 0) {
+            setMinuts((minuts) => minuts - 1);
+            setSeconds(59);
           }
         }
       }, 1000);
@@ -119,17 +119,16 @@ const CoutDown = ({ tareasList, isMoveProgresTask }) => {
   const mostrarBtn = () => {
     if (isActive) {
       return "Pause";
-    } else if (!isActive && seconds == 0) {
+    } else if (!isActive && seconds === 0) {
       return "Start";
-    } else if (!isActive && seconds != 0) {
+    } else if (!isActive && seconds !== 0) {
       return "Reanudar";
     }
   };
 
-  const showTimer = () => {};
-
   return (
     <>
+      {console.log(minuts)}
       <Card bg="danger" className="text-center">
         <Card.Body className="text-center">
           <div className="time">
