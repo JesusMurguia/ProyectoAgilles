@@ -94,66 +94,106 @@ const CoutDown = ({ isMoveProgresTask }) => {
     }
   };
   const activarDescanso = () => {
+
+    setIsActive(false);
+    localStorage.setItem("isCountDownActive", false);
+
     localStorage.setItem("pomodoroActivo", false);
     localStorage.setItem("descansoActivo", true);
     const cuantosHastaDescanso = localStorage.getItem("cuantosHastaDescanso");
     let seconds = cuantosHastaDescanso > 0 ? 5 * 60 : 20 * 60;
     setSeconds(0);
-    setMinuts(seconds / 60);
+    setMinuts(1);
     setIsActive(true);
     localStorage.setItem("isCountDownActive", true);
   };
 
   const activarPomodoro = () => {
+
+    setIsActive(false);
+    localStorage.setItem("isCountDownActive", false);
+
     localStorage.setItem("pomodoroActivo", true);
-    nextPomodoro();
     localStorage.setItem("descansoActivo", false);
+    
     setSeconds(0);
     setMinuts(SECONDS / 60);
-    // setMinuts(20*60 / 60);
     setIsActive(true);
     localStorage.setItem("isCountDownActive", true);
+    nextPomodoro();
     dismissAll();
   };
   useEffect(() => {
     let interval = null;
     if (isActive) {
       localStorage.setItem("isCountDownActive", true);
-      interval = setInterval(() => {
-        //mostrar notificacion 5 seg antes
-        if (minuts * 60 + seconds === 6) {
-          toast.info("El pomodoro esta por terminarse");
-        }
-
-        //saber si ya termino el pomodoro
-        if (minuts * 60 + seconds === 0) {
-          if (localStorage.getItem("descansoActivo") === "true") {
-            //activarPomodoro();
-          } else {
-            toast.info(
-              "El pomodoro se a terminado, puede tomar un descanso o presione 'omitir'",
-              {
-                position: "bottom-right",
-                autoClose: 300000,
-                hideProgressBar: false,
-                pauseOnHover: false,
-                progress: undefined,
-                closeButton: CloseButtonTerminado,
-                onClose: () => activarPomodoro(),
+      if(localStorage.getItem("pomodoroActivo") == "true"){
+        interval = setInterval(() => {
+          //mostrar notificacion 5 seg antes
+          if (minuts * 60 + seconds === 6) {
+  
+            if(localStorage.getItem("descansoActivo")== "false")
+              toast.info("El pomodoro esta por terminarse");
+          }
+  
+          //saber si ya termino el pomodoro
+          if (minuts * 60 + seconds === 0) {
+            if (localStorage.getItem("descansoActivo") === "true") {
+              console.log("coca1");
+              //activarPomodoro();
+              setIsActive(true);
+              localStorage.setItem("isCountDownActive", true);
+            } else {
+              console.log("coca2");
+              if(localStorage.getItem("descansoActivo")== "false"){
+              toast.info(
+                "El pomodoro se a terminado, puede tomar un descanso o presione 'omitir'",
+                {
+                  position: "bottom-right",
+                  autoClose: 300000,
+                  hideProgressBar: false,
+                  pauseOnHover: false,
+                  progress: undefined,
+                  closeButton: CloseButtonTerminado,
+                  onClose: () => activarPomodoro(),
+                }
+              );
+              activarDescanso();
               }
-            );
-            activarDescanso();
+            }
+            // reset();
+          } else {
+            setSeconds((seconds) => seconds - 1);
+  
+            if (seconds === 0) {
+              setMinuts((minuts) => minuts - 1);
+              setSeconds(59);
+            }
           }
-          // reset();
-        } else {
-          setSeconds((seconds) => seconds - 1);
-
-          if (seconds === 0) {
-            setMinuts((minuts) => minuts - 1);
-            setSeconds(59);
+        }, 100);
+      }else if(localStorage.getItem("descansoActivo") == "true"){
+        interval = setInterval(() => {
+          //mostrar notificacion 5 seg antes
+          if (minuts * 60 + seconds === 6) {
+              toast.info("El descanso esta por terminarse");
           }
-        }
-      }, 1000);
+  
+          //saber si ya termino el pomodoro
+          if (minuts * 60 + seconds === 0) {
+            setSeconds(0);
+            setMinuts(0);
+            setIsActive(false);
+            localStorage.setItem("isCountDownActive", false);
+          } else {
+            setSeconds((seconds) => seconds - 1);
+  
+            if (seconds === 0) {
+              setMinuts((minuts) => minuts - 1);
+              setSeconds(59);
+            }
+          }
+        }, 100);
+      }
     } else if (!isActive && seconds !== 0) {
       toast.info("El pomodoro se a pausado", {
         position: "bottom-right",
