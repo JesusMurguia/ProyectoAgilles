@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 
 import { useAuth } from "../hooks/useAuth";
 const CoutDown = ({ isMoveProgresTask }) => {
-  const SECONDS = 25 * 60;
+  const SECONDS = 20 * 60;
 
   const { getUserDocument, user } = useAuth();
   const [seconds, setSeconds] = useState(0);
@@ -48,9 +48,9 @@ const CoutDown = ({ isMoveProgresTask }) => {
     localStorage.setItem("pomodoroCount", 0);
     localStorage.setItem("cuantosHastaDescanso", 0);
     localStorage.setItem("descansoActivo", false);
+    setIsActive(false);
     setSeconds(0);
     setMinuts(SECONDS / 60);
-    setIsActive(false);
     localStorage.setItem("isCountDownActive", false);
   }
   const offCoutDown = useCallback(async () => {
@@ -64,7 +64,7 @@ const CoutDown = ({ isMoveProgresTask }) => {
 
   const CloseButtonTerminado = ({ closeToast }) => (
     <button
-      onClick={(closeToast, setActiveButton)}
+      onClick={(closeToast, activarPomodoro)}
       className="Toastify__close-button Toastify__close-button--light"
     >
       <i>omitir</i>
@@ -121,19 +121,19 @@ const CoutDown = ({ isMoveProgresTask }) => {
     setIsActive(true);
     localStorage.setItem("isCountDownActive", true);
 
-    //dismissAll();
+    dismissAll();
   };
   const activarPomodoro = () => {
     nextPomodoro();
     console.log("activar pomodoro");
-    //setIsActive(false);
-    //localStorage.setItem("isCountDownActive", false);
+    setIsActive(false);
+    localStorage.setItem("isCountDownActive", false);
+    setSeconds(0);
+    setMinuts(SECONDS / 60);
 
     localStorage.setItem("pomodoroActivo", true);
     localStorage.setItem("descansoActivo", false);
 
-    setSeconds(0);
-    setMinuts(SECONDS / 60);
     setIsActive(true);
     localStorage.setItem("isCountDownActive", true);
 
@@ -141,6 +141,7 @@ const CoutDown = ({ isMoveProgresTask }) => {
   };
   useEffect(() => {
     let interval = null;
+    console.log(isActive);
     if (isActive) {
       localStorage.setItem("isCountDownActive", true);
       if (localStorage.getItem("pomodoroActivo") == "true") {
@@ -169,7 +170,7 @@ const CoutDown = ({ isMoveProgresTask }) => {
                     pauseOnHover: false,
                     progress: undefined,
                     closeButton: CloseButtonTerminado,
-                    onClose: () => activarPomodoro(),
+                    //  onClose: () => activarPomodoro(),
                   }
                 );
                 activarDescanso();
@@ -206,7 +207,7 @@ const CoutDown = ({ isMoveProgresTask }) => {
               setSeconds(59);
             }
           }
-        }, 1);
+        }, 10);
       }
     } else if (!isActive && seconds !== 0) {
       toast.info("El pomodoro se a pausado", {
@@ -280,7 +281,7 @@ const CoutDown = ({ isMoveProgresTask }) => {
               </button>
             </Col>
             <Col xs={5} sm={4} md={3}>
-              <button className="button" onClick={multipleOnclick}>
+              <button className="button" onClick={() => multipleOnclick()}>
                 Reset
               </button>
             </Col>
