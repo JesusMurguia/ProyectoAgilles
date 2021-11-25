@@ -42,7 +42,10 @@ const CoutDown = ({ isMoveProgresTask }) => {
     });
   };
   function reset() {
-    
+    localStorage.setItem("pomodoroActivo", false);
+    localStorage.setItem("pomodoroCount", 0);
+    localStorage.setItem("cuantosHastaDescanso", 0);
+    localStorage.setItem("descansoActivo", false);
     setSeconds(0);
     setMinuts(SECONDS / 60);
     setIsActive(false);
