@@ -259,10 +259,12 @@ const CoutDown = ({ isMoveProgresTask }) => {
               Faltan {4 - localStorage.getItem("pomodoroCount")} pomodoros para
               un descanso de 20 minutos 😉
             </p>
-          ) : localStorage.getItem("pomodoroCount") > 0 ? (
-            <p>Siguiente descanso es de 20 minutos 😉</p>
-          ) : (
-            <p>Presiona Start para iniciar el pomodoro</p>
+            ) : localStorage.getItem("pomodoroCount") == "4" && localStorage.getItem("cuantosHastaDescanso") == "0" && localStorage.getItem("descansoActivo") == "true"?
+            <p>Disfruta tu descanso de 20 minutos ✌️</p>
+            : localStorage.getItem("pomodoroCount") > 0 ? (
+            <p>El siguiente descanso es de 20 minutos 😉</p>
+            ) : (
+           <p>Presiona Start para empezar tu pomodoro </p>
           )}
         </Card.Title>
         <Card.Body className="text-center">
