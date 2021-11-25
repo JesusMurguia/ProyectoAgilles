@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 
 import { useAuth } from "../hooks/useAuth";
 const CoutDown = ({ isMoveProgresTask }) => {
-  const SECONDS = 20*60;
+  const SECONDS = 25 * 60;
 
   const { getUserDocument, user } = useAuth();
   const [seconds, setSeconds] = useState(0);
@@ -94,7 +94,6 @@ const CoutDown = ({ isMoveProgresTask }) => {
     }
   };
   const activarDescanso = () => {
-
     setIsActive(false);
     localStorage.setItem("isCountDownActive", false);
 
@@ -103,19 +102,18 @@ const CoutDown = ({ isMoveProgresTask }) => {
     const cuantosHastaDescanso = localStorage.getItem("cuantosHastaDescanso");
     let seconds = cuantosHastaDescanso > 0 ? 5 * 60 : 20 * 60;
     setSeconds(0);
-    setMinuts(seconds/60);
+    setMinuts(seconds / 60);
     setIsActive(true);
     localStorage.setItem("isCountDownActive", true);
   };
 
   const activarPomodoro = () => {
-
     setIsActive(false);
     localStorage.setItem("isCountDownActive", false);
 
     localStorage.setItem("pomodoroActivo", true);
     localStorage.setItem("descansoActivo", false);
-    
+
     setSeconds(0);
     setMinuts(SECONDS / 60);
     setIsActive(true);
@@ -127,15 +125,14 @@ const CoutDown = ({ isMoveProgresTask }) => {
     let interval = null;
     if (isActive) {
       localStorage.setItem("isCountDownActive", true);
-      if(localStorage.getItem("pomodoroActivo") == "true"){
+      if (localStorage.getItem("pomodoroActivo") == "true") {
         interval = setInterval(() => {
           //mostrar notificacion 5 seg antes
           if (minuts * 60 + seconds === 6) {
-  
-            if(localStorage.getItem("descansoActivo")== "false")
+            if (localStorage.getItem("descansoActivo") == "false")
               toast.info("El pomodoro esta por terminarse");
           }
-  
+
           //saber si ya termino el pomodoro
           if (minuts * 60 + seconds === 0) {
             if (localStorage.getItem("descansoActivo") === "true") {
@@ -145,39 +142,38 @@ const CoutDown = ({ isMoveProgresTask }) => {
               localStorage.setItem("isCountDownActive", true);
             } else {
               console.log("coca2");
-              if(localStorage.getItem("descansoActivo")== "false"){
-              toast.info(
-                "El pomodoro se a terminado, puede tomar un descanso o presione 'omitir'",
-                {
-                  position: "bottom-right",
-                  autoClose: 300000,
-                  hideProgressBar: false,
-                  pauseOnHover: false,
-                  progress: undefined,
-                  closeButton: CloseButtonTerminado,
-                  onClose: () => activarPomodoro(),
-                }
-              );
-              activarDescanso();
+              if (localStorage.getItem("descansoActivo") == "false") {
+                toast.info(
+                  "El pomodoro se a terminado, puede tomar un descanso o presione 'omitir'",
+                  {
+                    position: "bottom-right",
+                    hideProgressBar: false,
+                    pauseOnHover: false,
+                    progress: undefined,
+                    closeButton: CloseButtonTerminado,
+                    onClose: () => activarPomodoro(),
+                  }
+                );
+                activarDescanso();
               }
             }
             // reset();
           } else {
             setSeconds((seconds) => seconds - 1);
-  
+
             if (seconds === 0) {
               setMinuts((minuts) => minuts - 1);
               setSeconds(59);
             }
           }
         }, 10);
-      }else if(localStorage.getItem("descansoActivo") == "true"){
+      } else if (localStorage.getItem("descansoActivo") == "true") {
         interval = setInterval(() => {
           //mostrar notificacion 5 seg antes
           if (minuts * 60 + seconds === 6) {
-              //toast.info("El descanso esta por terminarse");
+            //toast.info("El descanso esta por terminarse");
           }
-  
+
           //saber si ya termino el pomodoro
           if (minuts * 60 + seconds === 0) {
             setSeconds(0);
@@ -186,7 +182,7 @@ const CoutDown = ({ isMoveProgresTask }) => {
             localStorage.setItem("isCountDownActive", false);
           } else {
             setSeconds((seconds) => seconds - 1);
-  
+
             if (seconds === 0) {
               setMinuts((minuts) => minuts - 1);
               setSeconds(59);
@@ -197,7 +193,6 @@ const CoutDown = ({ isMoveProgresTask }) => {
     } else if (!isActive && seconds !== 0) {
       toast.info("El pomodoro se a pausado", {
         position: "bottom-right",
-        autoClose: 5000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
