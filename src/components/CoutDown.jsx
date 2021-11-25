@@ -23,17 +23,21 @@ const CoutDown = ({ isMoveProgresTask }) => {
 
       if (isProgreso.length >= 1) {
         if (!isActive && seconds === 0) {
-          dismissAll();
+          //dismissAll();
 
           if (localStorage.getItem("pomodoroActivo") == "true") {
             reset();
+          } else if (localStorage.getItem("descansoActivo") == "true") {
+            console.log("reaundar despues de descanso");
+            activarDespuesDeDescanso();
           } else {
             console.log("no hay pomodoro activo");
             activarPomodoro();
           }
+        } else {
+          setIsActive(!isActive);
+          localStorage.setItem("isCountDownActive", true);
         }
-        setIsActive(!isActive);
-        localStorage.setItem("isCountDownActive", true);
       } else {
         setShowMessage(true);
       }
@@ -107,9 +111,23 @@ const CoutDown = ({ isMoveProgresTask }) => {
     localStorage.setItem("isCountDownActive", true);
   };
 
+  const activarDespuesDeDescanso = () => {
+    nextPomodoro();
+    localStorage.setItem("pomodoroActivo", true);
+    localStorage.setItem("descansoActivo", false);
+
+    setSeconds(0);
+    setMinuts(SECONDS / 60);
+    setIsActive(true);
+    localStorage.setItem("isCountDownActive", true);
+
+    //dismissAll();
+  };
   const activarPomodoro = () => {
-    setIsActive(false);
-    localStorage.setItem("isCountDownActive", false);
+    nextPomodoro();
+    console.log("activar pomodoro");
+    //setIsActive(false);
+    //localStorage.setItem("isCountDownActive", false);
 
     localStorage.setItem("pomodoroActivo", true);
     localStorage.setItem("descansoActivo", false);
@@ -118,7 +136,7 @@ const CoutDown = ({ isMoveProgresTask }) => {
     setMinuts(SECONDS / 60);
     setIsActive(true);
     localStorage.setItem("isCountDownActive", true);
-    nextPomodoro();
+
     dismissAll();
   };
   useEffect(() => {
@@ -188,7 +206,7 @@ const CoutDown = ({ isMoveProgresTask }) => {
               setSeconds(59);
             }
           }
-        }, 10);
+        }, 1);
       }
     } else if (!isActive && seconds !== 0) {
       toast.info("El pomodoro se a pausado", {
@@ -224,15 +242,17 @@ const CoutDown = ({ isMoveProgresTask }) => {
     <>
       <Card bg="danger" className="text-center">
         <Card.Title>
-          <h2 className="mt-5">
-            Pomodoro:{" "}
-            {localStorage.getItem("pomodoroCount") > 0
-              ? localStorage.getItem("pomodoroCount")
-              : 0}
-          </h2>
           {localStorage.getItem("descansoActivo") === "true" ? (
-            <p>Estas en descanso</p>
-          ) : localStorage.getItem("cuantosHastaDescanso") > 0 ? (
+            <h2 className="mt-5">Descanso</h2>
+          ) : (
+            <h2 className="mt-5">
+              Pomodoro:{" "}
+              {localStorage.getItem("pomodoroCount") > 0
+                ? localStorage.getItem("pomodoroCount")
+                : 0}
+            </h2>
+          )}
+          {localStorage.getItem("cuantosHastaDescanso") > 0 ? (
             <p>
               Faltan {4 - localStorage.getItem("pomodoroCount")} pomodoros para
               un descanso de 20 minutos 😉
