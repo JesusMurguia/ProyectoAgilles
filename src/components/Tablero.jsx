@@ -28,20 +28,12 @@ const Tablero = (props) => {
           let date = new Date();
           tareasProgreso[index].fechaTerminada = date.getTime();
         }
-        //props.setIsMoveProgresTask(!props.isMoveProgresTask);
+
         break;
       case "sortable-terminada":
         tareasTerminadas[index].estado = estado;
         break;
       default:
-    }
-    //mostrar notificacion de exito al temrinar una tarea (cuando el timer no este funcionando)
-    if (
-      estado === "terminada" &&
-      localStorage.getItem("isCountDownActive") &&
-      localStorage.getItem("setShowMessageExito") === "true"
-    ) {
-      setShowMessageExito(true);
     }
   };
 
@@ -83,8 +75,12 @@ const Tablero = (props) => {
     setTareasTerminadas(sortedTareasTerminadas);
   };
   useEffect(() => {
-    //mostrar notificacion de exito al temrinar una tarea (cuando el timer este funcionando)
-    if (localStorage.getItem("setShowMessageExito") === "true") {
+    //mostrar notificacion de exito al temrinar una tarea
+
+    if (
+      localStorage.getItem("setShowMessageExito") === "true" &&
+      localStorage.getItem("isCountDownActive") === "false"
+    ) {
       setShowMessageExito(true);
     }
     getTareas();
@@ -93,7 +89,7 @@ const Tablero = (props) => {
       setTareasProgreso([]);
       setTareasTerminadas([]);
     };
-  }, [props.tareasList]);
+  }, []);
   return (
     <>
       <Row>
@@ -144,13 +140,6 @@ const Tablero = (props) => {
                       localStorage.getItem("isCountDownActive") === "true" ||
                       localStorage.getItem("isCountDownActive") === "paused"
                     ) {
-                      props.setTasks(
-                        tareasPendientes.concat(
-                          tareasProgreso,
-                          tareasTerminadas
-                        )
-                      );
-
                       props.setIsMoveProgresTask(!props.isMoveProgresTask);
                     }
                   });
@@ -205,8 +194,8 @@ const Tablero = (props) => {
         title={"Congratulations 👏🎊"}
         show={showMessageExito}
         onHide={() => {
-          setShowMessageExito(false);
           localStorage.setItem("setShowMessageExito", false);
+          setShowMessageExito(false);
         }}
       ></SuccessModal>
     </>

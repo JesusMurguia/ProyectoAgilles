@@ -164,7 +164,6 @@ export const AuthProvider = ({ children }) => {
     const userRef = firebase.firestore().collection("users").doc(user.uid);
     const snap = await userRef.get();
     if (snap.exists) {
-      console.log("update");
       await userRef.update({ tareas });
       //setUser(await getUserDocument(user));
     }

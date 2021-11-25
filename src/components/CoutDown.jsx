@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 
 import { useAuth } from "../hooks/useAuth";
 const CoutDown = ({ isMoveProgresTask }) => {
-  const SECONDS = 2;
+  const SECONDS = 60;
 
   const { getUserDocument, user } = useAuth();
   const [seconds, setSeconds] = useState(0);
@@ -22,27 +22,24 @@ const CoutDown = ({ isMoveProgresTask }) => {
       );
 
       if (isProgreso.length >= 1) {
-        
         if (!isActive && seconds === 0) {
           dismissAll();
 
-          if(localStorage.getItem('pomodoroActivo') == 'true'){
+          if (localStorage.getItem("pomodoroActivo") == "true") {
             reset();
-          }else{
-            console.log('no hay pomodoro activo');
+          } else {
+            console.log("no hay pomodoro activo");
             activarPomodoro();
           }
-        } 
+        }
         setIsActive(!isActive);
         localStorage.setItem("isCountDownActive", true);
-        
       } else {
         setShowMessage(true);
       }
     });
   };
   function reset() {
-    
     setSeconds(0);
     setMinuts(SECONDS / 60);
     setIsActive(false);
@@ -71,46 +68,49 @@ const CoutDown = ({ isMoveProgresTask }) => {
     }
   };
   const nextPomodoro = () => {
-    let pomodoroCount = localStorage.getItem("pomodoroCount") == 'NaN' || 
-    localStorage.getItem("pomodoroCount") == null ? 0 : localStorage.getItem("pomodoroCount");
+    let pomodoroCount =
+      localStorage.getItem("pomodoroCount") == "NaN" ||
+      localStorage.getItem("pomodoroCount") == null
+        ? 0
+        : localStorage.getItem("pomodoroCount");
     console.log(pomodoroCount);
-    if(pomodoroCount > 3){
-      localStorage.setItem("pomodoroCount",1)
-    }else{
-      localStorage.setItem("pomodoroCount",parseInt(pomodoroCount)+1)
+    if (pomodoroCount > 3) {
+      localStorage.setItem("pomodoroCount", 1);
+    } else {
+      localStorage.setItem("pomodoroCount", parseInt(pomodoroCount) + 1);
     }
     nextDescanso();
   };
   const nextDescanso = () => {
     let pomodoroCount = localStorage.getItem("pomodoroCount");
-    if(pomodoroCount > 3){
-      localStorage.setItem("cuantosHastaDescanso",0);
-    }else{
-      localStorage.setItem("cuantosHastaDescanso",4-parseInt(pomodoroCount));
+    if (pomodoroCount > 3) {
+      localStorage.setItem("cuantosHastaDescanso", 0);
+    } else {
+      localStorage.setItem("cuantosHastaDescanso", 4 - parseInt(pomodoroCount));
     }
   };
-  const activarDescanso=()=>{
+  const activarDescanso = () => {
     localStorage.setItem("pomodoroActivo", false);
-    localStorage.setItem("descansoActivo",true);
-    const cuantosHastaDescanso=localStorage.getItem("cuantosHastaDescanso");
-    let seconds=cuantosHastaDescanso > 0 ? 5*60 : 20*60;
+    localStorage.setItem("descansoActivo", true);
+    const cuantosHastaDescanso = localStorage.getItem("cuantosHastaDescanso");
+    let seconds = cuantosHastaDescanso > 0 ? 5 * 60 : 20 * 60;
     setSeconds(0);
     setMinuts(seconds / 60);
     setIsActive(true);
     localStorage.setItem("isCountDownActive", true);
-  }
+  };
 
-  const activarPomodoro=()=>{
-    localStorage.setItem("pomodoroActivo",true);
+  const activarPomodoro = () => {
+    localStorage.setItem("pomodoroActivo", true);
     nextPomodoro();
-    localStorage.setItem("descansoActivo",false);
+    localStorage.setItem("descansoActivo", false);
     setSeconds(0);
     setMinuts(SECONDS / 60);
     // setMinuts(20*60 / 60);
     setIsActive(true);
     localStorage.setItem("isCountDownActive", true);
     dismissAll();
-  }
+  };
   useEffect(() => {
     let interval = null;
     if (isActive) {
@@ -123,9 +123,9 @@ const CoutDown = ({ isMoveProgresTask }) => {
 
         //saber si ya termino el pomodoro
         if (minuts * 60 + seconds === 0) {
-          if(localStorage.getItem("descansoActivo") === "true"){
+          if (localStorage.getItem("descansoActivo") === "true") {
             //activarPomodoro();
-          }else{
+          } else {
             toast.info(
               "El pomodoro se a terminado, puede tomar un descanso o presione 'omitir'",
               {
@@ -141,8 +141,6 @@ const CoutDown = ({ isMoveProgresTask }) => {
             activarDescanso();
           }
           // reset();
-          
-          
         } else {
           setSeconds((seconds) => seconds - 1);
 
@@ -185,13 +183,26 @@ const CoutDown = ({ isMoveProgresTask }) => {
 
   return (
     <>
-      {console.log(minuts)}
       <Card bg="danger" className="text-center">
         <Card.Title>
-            <h2 className="mt-5">Pomodoro: {localStorage.getItem("pomodoroCount") > 0 ?localStorage.getItem("pomodoroCount"): 0 }</h2>
-            {localStorage.getItem("descansoActivo") === "true" ? <p>Estas en descanso</p>: localStorage.getItem("cuantosHastaDescanso") > 0 ?
-            <p >Faltan {4-localStorage.getItem("pomodoroCount")} pomodoros para un descanso de 20 minutos 😉</p>:localStorage.getItem("pomodoroCount") > 0 ?<p >Siguiente descanso es de 20 minutos 😉</p>: <p >Presiona Start para iniciar el pomodoro</p>
-            }
+          <h2 className="mt-5">
+            Pomodoro:{" "}
+            {localStorage.getItem("pomodoroCount") > 0
+              ? localStorage.getItem("pomodoroCount")
+              : 0}
+          </h2>
+          {localStorage.getItem("descansoActivo") === "true" ? (
+            <p>Estas en descanso</p>
+          ) : localStorage.getItem("cuantosHastaDescanso") > 0 ? (
+            <p>
+              Faltan {4 - localStorage.getItem("pomodoroCount")} pomodoros para
+              un descanso de 20 minutos 😉
+            </p>
+          ) : localStorage.getItem("pomodoroCount") > 0 ? (
+            <p>Siguiente descanso es de 20 minutos 😉</p>
+          ) : (
+            <p>Presiona Start para iniciar el pomodoro</p>
+          )}
         </Card.Title>
         <Card.Body className="text-center">
           <div className="time">

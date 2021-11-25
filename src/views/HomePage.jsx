@@ -8,12 +8,12 @@ import Tablero from "../components/Tablero";
 import CoutDown from "../components/CoutDown";
 
 const HomePage = () => {
-  const { user, getUserDocument } = useAuth();
+  const { user, firebase } = useAuth();
 
   const [showFormError, setShowFormError] = useState(false);
   const [showAddForm, setShowAddForm] = useState(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [isClickAddTask, setIsClickAddTask] = useState(false);
+
   const [tasks, setTasks] = useState([]);
   const [isLoading, setIsloading] = useState(true);
   const [isMoveProgresTask, setIsMoveProgresTask] = useState(false);
@@ -24,15 +24,18 @@ const HomePage = () => {
   };
 
   const getTasks = async () => {
-    await getUserDocument(user).then((value) => {
-      setTasks(value.tareas);
-      setIsClickAddTask(false);
-      setIsloading(false);
-    });
+    firebase
+      .firestore()
+      .collection("users")
+      .doc(user.uid)
+      .onSnapshot((value) => {
+        setTasks(value.data().tareas);
+        //   setIsClickAddTask(false);
+        setIsloading(false);
+      });
   };
   const IsTablero = () => {
     if (tasks && tasks.length > 0) {
-      console.log("first if");
       return (
         <Tablero
           setIsMoveProgresTask={setIsMoveProgresTask}
@@ -50,9 +53,8 @@ const HomePage = () => {
 
   //use effect para saber cuando se agrego una nueva tarea
   useEffect(() => {
-    console.log("usse effect home");
     getTasks();
-  }, [isClickAddTask]);
+  }, []);
 
   return (
     <Container>
@@ -74,7 +76,7 @@ TABLERO DONDE SE MUESTRA LAS TAREAS PENDIENTES Y TAREAS EN PROGRESO
       {/* FORM PARA AGREGAR UNA TAREA */}
       <AddForm
         game={showAddForm}
-        getTasks={getTasks}
+        //getTasks={getTasks}
         animation={false}
         show={Boolean(showAddForm)}
         onHide={() => {

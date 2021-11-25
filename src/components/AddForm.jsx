@@ -10,7 +10,7 @@ function AddForm(props) {
     showFormError,
     onSuccess,
     // setIsClickAddTask,
-    getTasks,
+    // getTasks,
     ...propsModal
   } = props;
 
@@ -26,7 +26,7 @@ function AddForm(props) {
     await addTarea(obj)
       .then((res) => {
         props.onSuccess();
-        getTasks();
+        // getTasks();
       })
       .catch((err) => {
         props.setShowFormError(err.message);
