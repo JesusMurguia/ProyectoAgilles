@@ -113,11 +113,12 @@ const CoutDown = ({ isMoveProgresTask }) => {
 
   const activarDespuesDeDescanso = () => {
     nextPomodoro();
+    localStorage.setItem("isCountDownActive", false);
+    setSeconds(0);
+    setMinuts(SECONDS / 60);
     localStorage.setItem("pomodoroActivo", true);
     localStorage.setItem("descansoActivo", false);
 
-    setSeconds(0);
-    setMinuts(SECONDS / 60);
     setIsActive(true);
     localStorage.setItem("isCountDownActive", true);
 
