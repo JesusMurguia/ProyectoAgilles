@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 
 import { useAuth } from "../hooks/useAuth";
 const CoutDown = ({ isMoveProgresTask }) => {
-  const SECONDS = 60;
+  const SECONDS = 20*60;
 
   const { getUserDocument, user } = useAuth();
   const [seconds, setSeconds] = useState(0);
@@ -103,7 +103,7 @@ const CoutDown = ({ isMoveProgresTask }) => {
     const cuantosHastaDescanso = localStorage.getItem("cuantosHastaDescanso");
     let seconds = cuantosHastaDescanso > 0 ? 5 * 60 : 20 * 60;
     setSeconds(0);
-    setMinuts(1);
+    setMinuts(seconds/60);
     setIsActive(true);
     localStorage.setItem("isCountDownActive", true);
   };
@@ -170,12 +170,12 @@ const CoutDown = ({ isMoveProgresTask }) => {
               setSeconds(59);
             }
           }
-        }, 100);
+        }, 10);
       }else if(localStorage.getItem("descansoActivo") == "true"){
         interval = setInterval(() => {
           //mostrar notificacion 5 seg antes
           if (minuts * 60 + seconds === 6) {
-              toast.info("El descanso esta por terminarse");
+              //toast.info("El descanso esta por terminarse");
           }
   
           //saber si ya termino el pomodoro
@@ -192,7 +192,7 @@ const CoutDown = ({ isMoveProgresTask }) => {
               setSeconds(59);
             }
           }
-        }, 100);
+        }, 10);
       }
     } else if (!isActive && seconds !== 0) {
       toast.info("El pomodoro se a pausado", {
