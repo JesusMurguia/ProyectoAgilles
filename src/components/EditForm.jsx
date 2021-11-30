@@ -3,13 +3,13 @@ import { Modal, Button, Form, Col, Row, Alert } from "react-bootstrap";
 import { useAuth } from "../hooks/useAuth";
 function AddForm(props) {
   let tarea=props.show;
-  const { addTarea,deleteTarea } = useAuth();
+  const { deleteTarea,updateTarea } = useAuth();
 
   //se separa la funcion de setState de los props del modal para evitar un error de renderizado
   const {
     setShowFormError,
     showFormError,
-    onSuccess,
+    showMessage,
     // setIsClickAddTask,
     // getTasks,
     ...propsModal
@@ -21,18 +21,18 @@ function AddForm(props) {
     const obj = {
       nombre: e.target.nombre.value,
       descripcion: e.target.descripcion.value,
-      estado: "pendiente",
+      estado: e.target.estado.value,
     };
 
-    await addTarea(obj)
-      .then((res) => {
-        props.onSuccess();
-        // getTasks();
-      })
-      .catch((err) => {
-        props.setShowFormError(err.message);
-      });
-  };
+    await updateTarea(tarea,obj).then((res) => {
+      showMessage("Tarea editada correctamente.")
+    }).catch((err) => {
+      console.log(err);
+      showMessage("Tarea ya existe");
+    })
+  }
+
+
 
   return (
     <Modal
@@ -61,7 +61,7 @@ function AddForm(props) {
             <Col md>
               <Form.Group controlId="nombre">
                 <Form.Label>Nombre</Form.Label>
-                <Form.Control type="text" maxLength="100" 
+                <Form.Control type="text" maxLength="100" required
                 defaultValue={tarea?.nombre}
                 />
               </Form.Group>
@@ -72,8 +72,18 @@ function AddForm(props) {
               <Form.Group controlId="descripcion">
                 <Form.Label>Descripcion</Form.Label>
                 <Form.Control
-                defaultValue={tarea?.descripcion}
+                defaultValue={tarea?.descripcion} required
                  as="textarea" rows={3} maxLength="100" />
+              </Form.Group>
+            </Col>
+          </Row>
+          <Row>
+            <Col md>
+              <Form.Group controlId="estado">
+                <Form.Label>Estado</Form.Label>
+                <Form.Control
+                defaultValue={tarea?.estado}
+                 as="textarea" disabled={true} />
               </Form.Group>
             </Col>
           </Row>
@@ -102,7 +112,8 @@ function AddForm(props) {
 
           <Row>
             <Col className="text-center m-4">
-              <Button variant="outline-light" type="submit" className="mt-3">
+              <Button variant="outline-light" type="submit"className="mt-3">
+              
                 Editar
               </Button>
             </Col>
@@ -112,7 +123,7 @@ function AddForm(props) {
                 onClick={async() => {
                   console.log(tarea);
                    await deleteTarea(tarea).then(() => {
-                     props.onSuccess();
+                    showMessage("Tarea eliminada correctamente.")
                    });
                 }}
 

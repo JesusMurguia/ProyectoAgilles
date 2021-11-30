@@ -109,9 +109,9 @@ TABLERO DONDE SE MUESTRA LAS TAREAS PENDIENTES Y TAREAS EN PROGRESO
         onHide={() => {
           setShowEditForm(false);
         }}
-        onSuccess={() => {
+        showMessage={(title) => {
           setShowEditForm(false);
-          setShowSuccessModal("Tarea eliminada correctamente");
+          setShowSuccessModal(title);
         }}
       />
     </Container>

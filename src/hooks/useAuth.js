@@ -180,6 +180,31 @@ export const AuthProvider = ({ children }) => {
      }
   };
 
+  const updateTarea = async (old,updated) => {
+    const userRef = firebase.firestore().collection("users").doc(user.uid);
+    const snap = await userRef.get();
+    if (snap.exists) {
+      const tareas = snap.data().tareas;
+      const nombres = tareas.map((tarea) => tarea.nombre);
+        const descripciones = tareas.map((tarea) => tarea.descripcion);
+        if (nombres.indexOf(updated.nombre.toString()) === -1 && descripciones.indexOf(updated.descripcion.toString()) === -1) {
+      const newTareas = tareas.map((t) => {
+        if(t.nombre === old.nombre && t.descripcion === old.descripcion){
+          return updated;
+        } 
+        return t;
+      });
+      await userRef.update({ tareas: newTareas });
+      setUser(await getUserDocument(user));
+    } else {
+      throw new Error("Tarea ya existe");
+
+    }
+
+  };
+  }
+
+
 
   // Subscribe to user on mount
   // Because this sets state in the callback it will cause any
@@ -207,6 +232,7 @@ export const AuthProvider = ({ children }) => {
     firebase,
     getUserDocument,
     deleteTarea,
+    updateTarea
   };
 
   return (
