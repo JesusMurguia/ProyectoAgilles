@@ -157,7 +157,10 @@ const Tablero = (props) => {
               {tareasProgreso.map((tarea) => (
                 <Container key={tarea.index} className="list-container">
                   <Row>
-                    <Col className="text-list-container">
+                    <Col className="text-list-container" 
+                     onClick={()=>{
+                      handleClick(tarea)
+                    }}>
                       <h3>{tarea.nombre}</h3>
                       <p>{tarea.descripcion}</p>
                       <p>{tarea.estado}</p>
