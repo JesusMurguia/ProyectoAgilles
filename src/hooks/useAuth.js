@@ -169,6 +169,18 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const deleteTarea = async (tarea) => {
+     const userRef = firebase.firestore().collection("users").doc(user.uid);
+     const snap = await userRef.get();
+     if (snap.exists) {
+       const tareas = snap.data().tareas;
+       const newTareas = tareas.filter((t) => t.nombre !== tarea.nombre && t.descripcion !== tarea.descripcion);
+        await userRef.update({ tareas: newTareas });
+        setUser(await getUserDocument(user));
+     }
+  };
+
+
   // Subscribe to user on mount
   // Because this sets state in the callback it will cause any
   // component that utilizes this hook to re-render with the
@@ -194,6 +206,7 @@ export const AuthProvider = ({ children }) => {
     logout,
     firebase,
     getUserDocument,
+    deleteTarea,
   };
 
   return (

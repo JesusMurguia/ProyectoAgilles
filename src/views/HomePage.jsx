@@ -6,10 +6,12 @@ import SuccessModal from "../components/SuccessModal";
 import { useAuth } from "../hooks/useAuth";
 import Tablero from "../components/Tablero";
 import CoutDown from "../components/CoutDown";
+import EditForm from "../components/EditForm";
 
 const HomePage = () => {
   const { user, firebase } = useAuth();
 
+  const [showEditForm, setShowEditForm] = useState(false);
   const [showFormError, setShowFormError] = useState(false);
   const [showAddForm, setShowAddForm] = useState(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -42,6 +44,8 @@ const HomePage = () => {
           isMoveProgresTask={isMoveProgresTask}
           tareasList={tasks}
           setTasks={setTasks}
+          showEditForm={showEditForm}
+          setShowEditForm={setShowEditForm}
         />
       );
     } else if (!isLoading) {
@@ -85,7 +89,7 @@ TABLERO DONDE SE MUESTRA LAS TAREAS PENDIENTES Y TAREAS EN PROGRESO
         }}
         onSuccess={() => {
           setShowAddForm(null);
-          setShowSuccessModal(true);
+          setShowSuccessModal("Tarea registrada correctamente");
           setShowFormError(null);
         }}
         showFormError={showFormError}
@@ -93,12 +97,23 @@ TABLERO DONDE SE MUESTRA LAS TAREAS PENDIENTES Y TAREAS EN PROGRESO
       />
       {/* MODAL DE EXITO */}
       <SuccessModal
-        title={"Tarea registrada correctamente!"}
+        title={showSuccessModal}
         show={showSuccessModal}
         onHide={() => {
-          setShowSuccessModal(false);
+          setShowSuccessModal("");
         }}
       ></SuccessModal>
+      {/* FORM PARA EDITAR UNA TAREA */}
+      <EditForm
+        show={showEditForm}
+        onHide={() => {
+          setShowEditForm(false);
+        }}
+        onSuccess={() => {
+          setShowEditForm(false);
+          setShowSuccessModal("Tarea eliminada correctamente");
+        }}
+      />
     </Container>
   );
 };

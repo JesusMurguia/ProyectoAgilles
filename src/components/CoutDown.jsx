@@ -142,7 +142,6 @@ const CoutDown = ({ isMoveProgresTask }) => {
   };
   useEffect(() => {
     let interval = null;
-    console.log(isActive);
     if (isActive) {
       localStorage.setItem("isCountDownActive", true);
       if (localStorage.getItem("pomodoroActivo") == "true") {
@@ -186,7 +185,7 @@ const CoutDown = ({ isMoveProgresTask }) => {
               setSeconds(59);
             }
           }
-        }, 10);
+        }, 1);
       } else if (localStorage.getItem("descansoActivo") == "true") {
         interval = setInterval(() => {
           //mostrar notificacion 5 seg antes
@@ -208,7 +207,7 @@ const CoutDown = ({ isMoveProgresTask }) => {
               setSeconds(59);
             }
           }
-        }, 10);
+        }, 1);
       }
     } else if (!isActive && seconds !== 0) {
       toast.info("El pomodoro se a pausado", {
